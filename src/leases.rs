@@ -28,7 +28,7 @@ pub enum LeaseKeyword {
     Cltt,
     BiteOrder,
     /// The keyword is one of the set we are ignoring/not supporting
-    /// (i.e., we ignore the kw and all tokens through the next [Endl](LexItem::Endl).
+    /// (i.e., we ignore the kw and all tokens through the next _Endl_ ";" character).
     Ignored,
 }
 
@@ -359,7 +359,7 @@ impl LeasesMethods for Leases {
     }
 }
 
-/// A lease entry in the dhcpd.leases file.
+/// A lease entry from the dhcpd.leases file, and contained within a [Leases] instance.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Lease {
     /// The IP associated with the lease entry.
@@ -375,9 +375,10 @@ pub struct Lease {
     /// The hostname, if the client sends the Hostname option.
     pub hostname: Option<String>,
     /// Flag to indicate the server has abandoned the lease due to a detected conflict.
-    /// From [Linux dhcpd.conf man page](https://linux.die.net/man/5/dhcpd.conf) _"the IP address
-    /// is in use by some host on the network that is not a DHCP client. It marks the address as
-    /// abandoned, and will not assign it to clients."_
+    /// From [Linux dhcpd.conf man page](https://linux.die.net/man/5/dhcpd.conf)
+    ///
+    /// > _"the IP address is in use by some host on the network that is not a DHCP client.
+    /// > It marks the address as abandoned, and will not assign it to clients."_
     pub abandoned: bool,
     /// The "binding state" (_Linux only_)
     pub binding_state: Option<String>,
@@ -390,6 +391,7 @@ pub struct Lease {
 }
 
 impl Lease {
+    /// Create a new instances with defaults.
     pub fn new() -> Lease {
         Lease {
             ip: "localhost".to_owned(),
@@ -413,6 +415,7 @@ impl Lease {
         }
     }
 
+    /// True if the lease is active at a [Date]
     pub fn is_active_at(&self, when: Date) -> bool {
         if self.dates.starts.is_some() && self.dates.starts.unwrap() > when {
             return false;
@@ -438,6 +441,7 @@ impl Lease {
         return self.hardware.as_ref().unwrap().mac.to_owned()
     }
 
+    /// Helper to get the "ends" date as a [chrono::DateTime]
     pub fn lease_end_dts(&self) -> DateTime<Utc> {
         return self.dates.ends.unwrap().to_chrono()
     }
@@ -482,15 +486,6 @@ fn parse_date<'l, T: Iterator<Item = &'l LexItem>>(iter: &mut Peekable<T>) -> Re
     iter.next();
     let time = iter.peek().expect("Time for end date expected").to_string();
     iter.next();
-    // TODO: For the BSD environment, this will have the tz at the end. For Linux the format depends on db-time-format
-    // For Linux:
-    //   Default format (UTC): day, date, time in UTC (3 2022/01/05 16:51:33)
-    //   Local format: epoch + "# human-readable" (<epoch_number>; # human-readable)
-    //   For never expire: "never"
-    // For BSD:
-    //   day, date, time "UTC" (1 1986/01/02 00:00:00 UTC)
-    //
-    // I just noticed that he has a Date struct in common.rs - duh.
 
     // Consume the next token if it's "UTC" (BSD style date)
     iter.next_if(|&k| String::from("UTC") == k.to_string());
@@ -498,6 +493,7 @@ fn parse_date<'l, T: Iterator<Item = &'l LexItem>>(iter: &mut Peekable<T>) -> Re
     Date::from(weekday, date, time)
 }
 
+/// Check to see if the next token is an endl.
 fn expect_endl<'l, T: Iterator<Item = &'l LexItem>>(iter: &mut Peekable<T>) -> Result<(), String> {
     return match iter.peek().unwrap() {
         LexItem::Endl => Ok(()),

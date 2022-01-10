@@ -1,15 +1,18 @@
 use crate::leases::parse_lease;
 use crate::leases::Lease;
 use crate::leases::Leases;
+#[doc(inline)]
 pub use crate::leases::LeasesMethods;
 use crate::lex::lex;
 use crate::lex::LexItem;
 
+/// Result for success returning a [Leases] instance.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParserResult {
     pub leases: Leases,
 }
 
+/// Keyword "lease"
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ConfigKeyword {
     Lease,
@@ -30,6 +33,7 @@ impl ConfigKeyword {
     }
 }
 
+/// Parse the config represented by a vector of tokens.
 fn parse_config(tokens: Vec<LexItem>) -> Result<ParserResult, String> {
     use crate::leases::LeaseKeyword;
 
@@ -96,6 +100,66 @@ fn parse_config(tokens: Vec<LexItem>) -> Result<ParserResult, String> {
     Ok(ParserResult { leases })
 }
 
+/// Parse the String containing the contents of the leases file.
+///
+/// # Overview
+///
+/// The "dhcpd.leases" contents should be loaded into a [String] to pass into this function. Note
+/// that this library does not support loading the leases file. On Linux the default file is generally
+/// found in "/var/lib/dhcp/dhcpd.leases".
+///
+/// This will parse the contents of the dhcpd.leases file and, if successful, return a [ParserResult]
+/// with the [Leases] instance (a vector of [Lease] instances).
+///
+/// The parser will correctly ignore comments found in the "dhcpd.leases" file.
+///
+/// # Simple Example
+///
+/// The following is a simple illustration. (It will not actually run as-is; either paste the contents
+/// of your dhcpd.leases file into the string in the `load_leases_file`, or refer to the examples/simple.rs
+/// for a function to load the file.)
+///
+/// ```rust
+/// use crate::dhcpd_parser::parser;
+/// use dhcpd_parser::leases::LeasesMethods;
+///
+/// fn load_leases_file() -> String {
+///     String::from("<contents of your dhcpd.leases file>")
+/// }
+///
+/// fn main() {
+///     let my_contents = load_leases_file();
+///     let res = parser::parse(&my_contents);
+///     let leases = res.unwrap().leases;
+///
+///     println!("Loaded {} leases", leases.count());
+/// }
+/// ```
+///
+/// # Caveats
+///
+/// ## On Support for Keywords
+///
+/// While the library supports both BSD/Linux-style servers, it does not as-yet attempt to support the
+/// full specifications of the Linux/ISC servers (or your specific implementation you use). The known keywords
+/// that are not yet supported are in an ignored list; lines starting with these keywords will be skipped.
+///
+/// There is the possibility that your server adds keywords that this parser does not recognize. This will
+/// result in an error. A feature that is tracked is to add support to either simply warn on unrecognized
+/// keywords, or to add these to a vector on the [Lease] struct for a user's special case handling. I recommend
+/// that if this scenario happens, the content of the file should have these lines stripped out before passing
+/// the string into this function. (For example: `cat dhcpd.leases | grep -v "<unknown-keyword>"`)
+///
+/// See:
+/// * [BSD leases man page](https://man.openbsd.org/dhcpd.leases.5)
+/// * [Linux leases man page](https://linux.die.net/man/5/dhcpd.leases)
+/// * [ISC leases man page](https://manpages.debian.org/testing/isc-dhcp-server/dhcpd.leases.5.en.html)
+///
+/// ## On "panic!"
+///
+/// This function currently can "panic!" on certain errors. This will be removed in a future release. This is
+/// generally when the file has a keyword/syntax error. Please file an issue if you fina a "panic!" on a
+/// valid formatted leases file.
 pub fn parse<S>(input: S) -> Result<ParserResult, String>
 where
     S: Into<String>,

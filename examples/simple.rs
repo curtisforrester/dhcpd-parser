@@ -1,85 +1,40 @@
+//! Example of simple use of the DHCP leases parser from a static string.
 extern crate dhcpd_parser;
 
 use crate::dhcpd_parser::parser;
-use std::fs::File;
-use std::io::Read;
-use std::path::PathBuf;
-use std::str::FromStr;
-use dhcpd_parser::leases::{Leases, LeasesMethods};
-use dhcpd_parser::util::{LeaseFilterBuilder, LeasesFilter};
+use dhcpd_parser::leases::LeasesMethods;
 
-/// Load the contents of the leases file
-pub fn load_file(filename: &PathBuf) -> Result<String, String> {
-    return match File::open(&filename) {
-        Ok(mut f) => {
-            let mut s = String::new();
-            f.read_to_string(&mut s).unwrap();
-            Result::Ok(s)
-        },
-        Err(e) => {
-            Result::Err(format!("Failed to open: {}. Error: {}", filename.display(), e))
-        }
+pub fn main() {
+    println!("Simple example to parse leases from string");
+
+    let res = parser::parse(
+        "
+    lease 192.168.4.105 {
+      starts 3 2022/01/05 16:51:33;
+      ends 3 2022/01/05 18:51:33;
+      tstp 3 2022/01/05 18:51:33;
+      cltt 3 2022/01/05 16:51:33;
+      binding state free;
+      hardware ethernet 00:ea:d4:39:0d:04;
+      uid \"\\001\\000\\352\\3249\\015\\004\";
+      reserved a b c d;
     }
-}
 
-/// Load the leases from the leases file
-fn load_leases(filename: &PathBuf) -> Result<Leases, String> {
-    if let Result::Ok(content) = load_file(filename) {
-        return match parser::parse(content) {
-            Result::Ok(res) => {
-                Result::Ok(res.leases)
-            },
-            Result::Err(e) => Result::Err(e)
-        }
+    lease 192.168.4.108 {
+      starts 6 2022/01/08 17:46:16;
+      ends 6 2022/01/08 17:56:16;
+      cltt 6 2022/01/08 17:46:16;
+      binding state active;
+      next binding state free;
+      rewind binding state free;
+      hardware ethernet 00:ea:d4:39:0d:04;
+      client-hostname \"clsomimx6\";
     }
-    else {
-        Result::Err("Failed to load leases".to_string())
-    }
-}
+    ",
+    );
+    assert!(res.is_ok(), "{}", res.err().unwrap());
 
-/// List the loaded leases
-fn list_leases(leases: &Leases) {
-    for lease in leases.all() {
-        println!("IP: {}, Client: {}, Ends: {}, IsActive: {}",
-                 lease.ip,
-                 lease.client(),
-                 lease.lease_end_dts(),
-                 lease.is_active()
-        );
-    }
-}
+    let leases = res.unwrap().leases;
 
-/// Demo of filtering leases
-fn filter_leases(leases: &Leases) {
-    let filtered = LeasesFilter::by_mac_all(leases, "00:ad:d4:39:0d:04");
-    println!("Filtered lease list: Count={}", filtered.len());
-
-    let active = LeasesFilter::by_mac_active(leases, "00:ad:d4:39:0d:04");
-    println!("Active lease list: Count={}", active.len());
-}
-
-/// Demo of filtering with the LeaseFilterBuilder
-fn filter_builder(leases: &Leases) {
-    println!("\nFiltering to one MAC, active leases");
-
-    let mut builder = LeaseFilterBuilder::new(&leases);
-    let filtered = builder.on_mac("00:ad:d4:39:0d:04")
-        .on_active()
-        .collect();
-
-    list_leases(&filtered);
-}
-
-fn main() -> Result<(), String> {
-    println!("Simple example from loaded (Linux) leases file");
-    let filename = PathBuf::from_str("tests/data/dhcpd-linux.leases").unwrap();
-
-    let leases = load_leases(&filename)?;
-    println!("Loaded {} leases from {}", leases.count(), filename.display());
-
-    list_leases(&leases);
-    filter_leases(&leases);
-    filter_builder(&leases);
-
-    Result::Ok(())
+    assert_eq!(leases.count(), 2);
 }
