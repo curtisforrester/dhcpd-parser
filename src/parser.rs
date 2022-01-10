@@ -31,8 +31,11 @@ impl ConfigKeyword {
 }
 
 fn parse_config(tokens: Vec<LexItem>) -> Result<ParserResult, String> {
+    use crate::leases::LeaseKeyword;
+
     let mut leases = Leases::new();
     let lease = Lease::new();
+    let mut bite_order : Option<String> = None;
 
     let mut it = tokens.iter().peekable();
 
@@ -64,8 +67,25 @@ fn parse_config(tokens: Vec<LexItem>) -> Result<ParserResult, String> {
                     ));
                 }
 
+                // Set the bite_order if supplied (Linux only)
+                lease.byte_order = bite_order.clone();
+
                 leases.push(lease.clone());
                 it.next();
+            }
+            LexItem::Opt(LeaseKeyword::BiteOrder) => {
+                it.next();
+                match it.next_if(|&k | k != &LexItem::Endl) {
+                    Some(val) => {
+                        // println!("Found: author-bite-order: {}", val.to_string());
+                        bite_order = Some(val.to_string());
+                    },
+                    None => return Err(format!("Expected author-bite-order value. Found endl instead"))
+                };
+                match it.next_if_eq(&&LexItem::Endl) {
+                    Some(_) => (),
+                    None => return Err(format!("Expected semicolon after author-bite-order term")),
+                }
             }
             _ => {
                 return Err(format!("Unexpected {:?}", it.peek()));
@@ -73,7 +93,7 @@ fn parse_config(tokens: Vec<LexItem>) -> Result<ParserResult, String> {
         }
     }
 
-    Ok(ParserResult { leases: leases })
+    Ok(ParserResult { leases })
 }
 
 pub fn parse<S>(input: S) -> Result<ParserResult, String>

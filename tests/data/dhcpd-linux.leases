@@ -1,0 +1,59 @@
+# The format of this file is documented in the dhcpd.leases(5) manual page.
+# This lease file was written by isc-dhcp-4.4.1
+
+# authoring-byte-order entry is generated, DO NOT DELETE
+authoring-byte-order little-endian;
+
+lease 192.168.4.101 {
+  starts 2 2021/11/30 19:57:47;
+  ends 2 2021/11/30 21:57:47;
+  tstp 2 2021/11/30 21:57:47;
+  cltt 2 2021/11/30 19:57:47;
+  binding state free;
+  hardware ethernet 00:ab:d4:41:21:10;
+  uid "\001\000\352\324A!\020";
+}
+lease 192.168.4.104 {
+  starts 2 2021/12/07 20:22:14;
+  ends 2 2021/12/07 20:32:14;
+  tstp 2 2021/12/07 20:32:14;
+  cltt 2 2021/12/07 20:24:17;
+  binding state free;
+  hardware ethernet 00:e0:4c:68:dc:cf;
+  uid "\001\000\340Lh\334\317";
+}
+lease 192.168.4.106 {
+  starts 2 2022/01/04 19:50:22;
+  ends 2 2022/01/04 19:52:14;
+  tstp 2 2022/01/04 19:52:14;
+  cltt 2 2022/01/04 19:50:22;
+  binding state free;
+  hardware ethernet 00:ab:d4:39:0d:04;
+}
+lease 192.168.4.107 {
+  starts 3 2022/01/05 16:40:01;
+  ends 3 2022/01/05 16:42:49;
+  tstp 3 2022/01/05 16:42:49;
+  cltt 3 2022/01/05 16:40:01;
+  binding state free;
+  hardware ethernet 00:ad:d4:39:0d:04;
+}
+lease 192.168.4.105 {
+  starts 3 2022/01/05 16:51:33;
+  ends 3 2022/01/05 18:51:33;
+  tstp 3 2022/01/05 18:51:33;
+  cltt 3 2022/01/05 16:51:33;
+  binding state free;
+  hardware ethernet 00:ab:d4:39:0d:04;
+  uid "\001\000\352\3249\015\004";
+}
+lease 192.168.4.108 {
+  starts 6 2022/01/08 17:46:16;
+  ends 6 2022/01/08 17:56:16;
+  cltt 6 2022/01/08 17:46:16;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ad:d4:39:0d:04;
+  client-hostname "hostname";
+}

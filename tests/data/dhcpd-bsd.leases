@@ -1,0 +1,27 @@
+# Sample BSD dhcpd.leases
+lease 192.168.0.2 {
+    starts 2 2019/01/01 22:00:00 UTC;
+    ends 2 2019/01/01 23:00:00 UTC;
+    hardware type 11:11:11:11:11:11;
+    uid Client1;
+    client-hostname \"CLIENTHOSTNAME\";
+    hostname \"TESTHOSTNAME\";
+    abandoned;
+}
+
+lease 192.168.0.3 {
+    starts 1 1985/01/02 00:00:00 UTC;
+    ends 1 1985/01/02 02:00:00 UTC;
+    hardware type 22:22:22:22:22:22;
+    uid Client2;
+    hostname \"TESTHOSTNAME\";
+    client-hostname \"HN\";
+}
+
+lease 192.168.0.3 {
+    starts 1 1986/01/02 00:00:00 UTC;
+    ends 1 1986/12/02 02:00:00 UTC;
+    hardware type 22:22:22:22:22:22;
+    uid Client2;
+    client-hostname \"HN\";
+}

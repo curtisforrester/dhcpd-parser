@@ -1,5 +1,9 @@
 extern crate dhcpd_parser;
 
+use std::fs::File;
+use std::io::Read;
+use std::path::PathBuf;
+use std::str::FromStr;
 use crate::dhcpd_parser::common::Date;
 use crate::dhcpd_parser::parser;
 use crate::dhcpd_parser::parser::LeasesMethods;
@@ -228,4 +232,85 @@ fn client_hostnames_test() {
             .cloned()
             .collect()
     );
+}
+
+pub fn load_file(filename: &PathBuf) -> Result<String, String> {
+    return match File::open(&filename) {
+        Ok(mut f) => {
+            let mut s = String::new();
+            f.read_to_string(&mut s).unwrap();
+            Result::Ok(s)
+        },
+        Err(e) => {
+            Result::Err(format!("Failed to open: {}. Error: {}", filename.display(), e))
+        }
+    }
+}
+
+#[test]
+fn load_file_test() {
+    let content = load_file(&PathBuf::from_str("tests/data/dhcpd-linux.leases").unwrap());
+    assert!(content.is_ok());
+}
+
+#[test]
+fn load_linux_leases_from_file_test() {
+    if let Result::Ok(content) = load_file(&PathBuf::from_str("tests/data/dhcpd-linux.leases").unwrap()) {
+        match parser::parse(content) {
+            Result::Ok(res) => {
+                let leases = res.leases;
+                assert_eq!(leases.count(), 6);
+                assert_eq!(leases[0].byte_order, Some("little-endian".to_string()));
+            },
+            Result::Err(e) => assert!(false, "{}", e)
+        }
+    }
+}
+
+#[test]
+fn load_bsd_leases_from_file_test() {
+    if let Result::Ok(content) = load_file(&PathBuf::from_str("tests/data/dhcpd-bsd.leases").unwrap()) {
+        match parser::parse(content) {
+            Result::Ok(res) => {
+                let leases = res.leases;
+                assert_eq!(leases.count(), 3, "Count of leases in BSD file is not 3. Found: {}", leases.count());
+                assert_eq!(leases[0].byte_order, None);
+            },
+            Result::Err(e) => assert!(false, "{}", e)
+        }
+    }
+}
+
+#[test]
+fn linux_test() {
+    let res = parser::parse(
+        "
+    lease 192.168.4.105 {
+      starts 3 2022/01/05 16:51:33;
+      ends 3 2022/01/05 18:51:33;
+      tstp 3 2022/01/05 18:51:33;
+      cltt 3 2022/01/05 16:51:33;
+      binding state free;
+      hardware ethernet 00:ea:d4:39:0d:04;
+      uid \"\\001\\000\\352\\3249\\015\\004\";
+      reserved a b c d;
+    }
+
+    lease 192.168.4.108 {
+      starts 6 2022/01/08 17:46:16;
+      ends 6 2022/01/08 17:56:16;
+      cltt 6 2022/01/08 17:46:16;
+      binding state active;
+      next binding state free;
+      rewind binding state free;
+      hardware ethernet 00:ea:d4:39:0d:04;
+      client-hostname \"clsomimx6\";
+    }
+    ",
+    );
+    assert!(res.is_ok(), "{}", res.err().unwrap());
+
+    let leases = res.unwrap().leases;
+
+    assert_eq!(leases.count(), 2);
 }

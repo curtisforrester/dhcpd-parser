@@ -1,5 +1,7 @@
 use std::fmt;
 use std::cmp;
+use chrono::prelude::*;
+use chrono::DateTime;
 
 #[derive(Clone, Debug, PartialEq, Eq, Copy)]
 pub struct Date {
@@ -12,6 +14,7 @@ pub struct Date {
     pub second: i64,
 }
 
+// TODO: This should all really just use the chrono crate... especially since 4660 other crates use it... We'd get serde by default.
 impl Date {
     pub fn from<S: Into<String>>(wd: S, d: S, t: S) -> Result<Date, String> {
         let weekday = wd.into();
@@ -97,6 +100,12 @@ impl Date {
             6 => "Saturday".to_owned(),
             _ => "Not a valid weekday".to_owned(),
         }
+    }
+
+    /// Return self as an instance of chrono DateTime<Utc>
+    pub fn to_chrono(self) -> DateTime<Utc> {
+        Utc.ymd(self.year as i32, self.month as u32, self.day as u32)
+            .and_hms(self.hour as u32, self.minute as u32, self.second as u32)
     }
 }
 
