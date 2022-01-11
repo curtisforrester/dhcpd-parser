@@ -464,7 +464,7 @@ impl Lease {
         // Compare ending DTS to now
         if let Some(end_dts) = self.dates.ends {
             let now = Utc::now();
-            return end_dts.to_chrono() < now;
+            return end_dts.to_chrono() > now;
         }
 
         // Note: Don't want to panic - but normally we would
