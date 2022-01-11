@@ -115,16 +115,22 @@ fn parse_config(tokens: Vec<LexItem>) -> Result<ParserResult, String> {
 ///
 /// # Simple Example
 ///
-/// The following is a simple illustration. (It will not actually run as-is; either paste the contents
-/// of your dhcpd.leases file into the string in the `load_leases_file`, or refer to the examples/simple.rs
-/// for a function to load the file.)
+/// The following is a simple illustration. (The "load" here simply hard-codes a string.)
 ///
 /// ```rust
 /// use crate::dhcpd_parser::parser;
 /// use dhcpd_parser::leases::LeasesMethods;
 ///
 /// fn load_leases_file() -> String {
-///     String::from("<contents of your dhcpd.leases file>")
+///     String::from("lease 192.168.0.2 {
+///         starts 2 2019/01/01 22:00:00 UTC;
+///         ends 2 2019/01/01 23:00:00 UTC;
+///         hardware type 11:11:11:11:11:11;
+///         uid Client1;
+///         client-hostname \"CLIENTHOSTNAME\";
+///         hostname \"TESTHOSTNAME\";
+///         abandoned;
+///     }")
 /// }
 ///
 /// fn main() {

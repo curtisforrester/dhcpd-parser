@@ -6,6 +6,7 @@
 use crate::leases::{Lease, Leases};
 #[doc(inline)]
 use crate::leases::{LeasesMethods};
+use chrono::prelude::*;
 
 
 pub struct LeasesFilter {}
@@ -66,8 +67,10 @@ impl LeasesFilter {
 /// * `.collect` constructs an instance of [Leases] with a clone of the matching [Lease] items
 ///
 ///```rust
+/// use dhcpd_parser::leases::{Leases, LeasesMethods};
 /// use dhcpd_parser::util::{LeaseFilterBuilder, LeasesFilter};
 ///
+/// let leases = Leases::new();  // Naturally, you will actually load/populate the leases
 /// let mut builder = LeaseFilterBuilder::new(&leases);
 /// let filtered = builder.on_mac("00:ad:d4:39:0d:04")
 ///    .on_active()
@@ -80,9 +83,11 @@ impl LeasesFilter {
 /// Because we supplied a partial IP, this will match all entries with IP starting with "192.168.4". (Naturally,
 /// for most DHCP servers, this would be _all_ the IPs.)
 ///
-/// ```rust
+///```rust
+/// use dhcpd_parser::leases::{Leases, LeasesMethods};
 /// use dhcpd_parser::util::{LeaseFilterBuilder, LeasesFilter};
 ///
+/// let leases = Leases::new();  // Naturally, you will actually load/populate the leases
 /// let mut builder = LeaseFilterBuilder::new(&leases);
 /// let filtered = builder.on_ip("192.168.4")
 ///     .collect();
@@ -160,6 +165,51 @@ impl LeaseFilterBuilder {
         }
 
         self.match_indexes.retain(|&i| keep_ndx.contains(&i));
+
+        self
+    }
+
+    /// Add filtering on [active_after](Lease::active_after) with the DateTime set to `dt` if supplied,
+    /// or [Utc::now()] if not supplied. NOTE: The `dt` field is primarily to allow testing and analysis
+    /// on leases files at a later date.
+    pub fn on_active_now(&mut self, dt: Option<DateTime<Utc>>) -> &mut Self {
+        let mut keep_ndx : Vec<usize> = Vec::new();
+        let compare_dt = match dt {
+            Some(d) => d,
+            None => Utc::now()
+        };
+
+        for ndx in self.match_indexes.iter() {
+            let lease = &self.leases[*ndx];
+
+            if lease.active_after(compare_dt) {
+                keep_ndx.push(ndx.clone());
+            }
+        }
+
+        self.match_indexes.retain(|&i| keep_ndx.contains(&i));
+
+        self
+    }
+
+    /// Add a filter to only the "latest". This is interpreted as the lease item that has the
+    /// latest "ends" DateTime. This is necessary because the Linux/ISC leases file will contain
+    /// multiple "leases" entries for the same client/IP with overlapping DTS ranges. Why? /shrug.
+    pub fn latest(&mut self) -> &mut Self {
+        let mut keep_ndx : usize = 0;
+        let mut dt = Utc.ymd(1970, 1, 1).and_hms(0, 1, 1);
+
+        for ndx in self.match_indexes.iter() {
+            let lease = &self.leases[*ndx];
+
+            if lease.lease_end_dts() > dt {
+                keep_ndx = *ndx;
+                dt = lease.lease_end_dts();
+            }
+
+        }
+
+        self.match_indexes.retain(|&i | i == keep_ndx);
 
         self
     }

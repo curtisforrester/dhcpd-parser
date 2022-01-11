@@ -107,6 +107,23 @@ lease 192.168.4.108 {
   hardware ethernet 00:ea:d4:39:0d:04;
   client-hostname "clsomimx6";
 }
+# Next 2 are expired leases
+lease 192.168.4.106 {
+  starts 1 2022/01/10 23:54:10;
+  ends 2 2022/01/11 00:04:10;
+  cltt 1 2022/01/10 23:54:10;
+  binding state free;
+  hardware ethernet 00:aa:bb:cc:dd:01;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.106 {
+  starts 1 2022/01/10 23:58:50;
+  ends 2 2022/01/11 00:08:50;
+  cltt 1 2022/01/10 23:58:50;
+  binding state free;
+  hardware ethernet 00:aa:bb:cc:dd:01;
+  client-hostname "clsomimx6";
+}
 lease 192.168.4.108 {
   starts 1 2022/01/10 23:54:10;
   ends 2 2022/01/11 00:04:10;

@@ -447,6 +447,7 @@ impl Lease {
     }
 
     /// Indicates if the lease is currently active (true), or expired (false)
+    /// Linux NOTE: By observation, multiple leases can be "active".
     pub fn is_active(&self) -> bool {
         if self.abandoned == true {
             return false;
@@ -464,12 +465,21 @@ impl Lease {
         // Compare ending DTS to now
         if let Some(end_dts) = self.dates.ends {
             let now = Utc::now();
+            log::trace!("");
             return end_dts.to_chrono() > now;
         }
 
         // Note: Don't want to panic - but normally we would
         println!("Unable to accurately determine if lease is active. Please file a bug issue for the dhcpd-parser library.");
         println!("Reference: lease.dates.ends is None in 'Lease::is_active'");
+
+        false
+    }
+
+    pub fn active_after(&self, dt: DateTime<Utc>) -> bool {
+        if let Some(end_dts) = self.dates.ends {
+            return end_dts.to_chrono() > dt;
+        }
 
         false
     }
