@@ -268,6 +268,40 @@ fn load_linux_leases_from_file_test() {
 }
 
 #[test]
+fn load_linux_multi_leases_from_file_test() {
+    if let Result::Ok(content) = load_file(&PathBuf::from_str("tests/data/dhcpd-multiple.leases").unwrap()) {
+        match parser::parse(content) {
+            Result::Ok(res) => {
+                let leases = res.leases;
+                assert_eq!(leases.count(), 14);
+                assert_eq!(leases[0].byte_order, Some("little-endian".to_string()));
+            },
+            Result::Err(e) => assert!(false, "{}", e)
+        }
+    }
+}
+
+#[test]
+fn filter_on_active_test() {
+    use dhcpd_parser::util::LeaseFilterBuilder;
+
+    if let Result::Ok(content) = load_file(&PathBuf::from_str("tests/data/dhcpd-multiple.leases").unwrap()) {
+        match parser::parse(content) {
+            Ok(res) => {
+                let leases = res.leases;
+                let mut builder = LeaseFilterBuilder::new(&leases);
+                let filtered = builder.on_mac("00:ae:d4:39:0d:04")
+                    .on_active()
+                    .collect();
+
+                assert_eq!(filtered.count(), 0);
+            },
+            Err(e) => assert!(false, "{}", e)
+        }
+    }
+}
+
+#[test]
 fn load_bsd_leases_from_file_test() {
     if let Result::Ok(content) = load_file(&PathBuf::from_str("tests/data/dhcpd-bsd.leases").unwrap()) {
         match parser::parse(content) {

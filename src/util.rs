@@ -3,7 +3,7 @@
 //! * LeasesFilter: First version of simple filtering
 //! * LeaseFilterBuilder: More robust filtering
 #[doc(inline)]
-pub use crate::leases::{Lease, Leases};
+use crate::leases::{Lease, Leases};
 #[doc(inline)]
 use crate::leases::{LeasesMethods};
 

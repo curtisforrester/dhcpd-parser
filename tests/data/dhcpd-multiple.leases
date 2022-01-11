@@ -1,0 +1,139 @@
+# The format of this file is documented in the dhcpd.leases(5) manual page.
+# This lease file was written by isc-dhcp-4.4.1
+
+# authoring-byte-order entry is generated, DO NOT DELETE
+authoring-byte-order little-endian;
+
+lease 192.168.4.101 {
+  starts 2 2021/11/30 19:57:47;
+  ends 2 2021/11/30 21:57:47;
+  tstp 2 2021/11/30 21:57:47;
+  cltt 2 2021/11/30 19:57:47;
+  binding state free;
+  hardware ethernet 00:ea:d4:41:21:10;
+  uid "\001\000\352\324A!\020";
+}
+lease 192.168.4.104 {
+  starts 2 2021/12/07 20:22:14;
+  ends 2 2021/12/07 20:32:14;
+  tstp 2 2021/12/07 20:32:14;
+  cltt 2 2021/12/07 20:24:17;
+  binding state free;
+  hardware ethernet 00:e0:4c:68:dc:cf;
+  uid "\001\000\340Lh\334\317";
+}
+lease 192.168.4.106 {
+  starts 2 2022/01/04 19:50:22;
+  ends 2 2022/01/04 19:52:14;
+  tstp 2 2022/01/04 19:52:14;
+  cltt 2 2022/01/04 19:50:22;
+  binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+}
+lease 192.168.4.107 {
+  starts 3 2022/01/05 16:40:01;
+  ends 3 2022/01/05 16:42:49;
+  tstp 3 2022/01/05 16:42:49;
+  cltt 3 2022/01/05 16:40:01;
+  binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+}
+lease 192.168.4.105 {
+  starts 3 2022/01/05 16:51:33;
+  ends 3 2022/01/05 18:51:33;
+  tstp 3 2022/01/05 18:51:33;
+  cltt 3 2022/01/05 16:51:33;
+  binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  uid "\001\000\352\3249\015\004";
+}
+lease 192.168.4.108 {
+  starts 1 2022/01/10 23:28:19;
+  ends 1 2022/01/10 23:38:19;
+  cltt 1 2022/01/10 23:28:19;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.108 {
+  starts 1 2022/01/10 23:32:18;
+  ends 1 2022/01/10 23:42:18;
+  cltt 1 2022/01/10 23:32:18;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.108 {
+  starts 1 2022/01/10 23:36:32;
+  ends 1 2022/01/10 23:46:32;
+  cltt 1 2022/01/10 23:36:32;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.108 {
+  starts 1 2022/01/10 23:40:56;
+  ends 1 2022/01/10 23:50:56;
+  cltt 1 2022/01/10 23:40:56;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.108 {
+  starts 1 2022/01/10 23:44:45;
+  ends 1 2022/01/10 23:54:45;
+  cltt 1 2022/01/10 23:44:45;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.108 {
+  starts 1 2022/01/10 23:49:11;
+  ends 1 2022/01/10 23:59:11;
+  cltt 1 2022/01/10 23:49:11;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.108 {
+  starts 1 2022/01/10 23:54:10;
+  ends 2 2022/01/11 00:04:10;
+  cltt 1 2022/01/10 23:54:10;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.108 {
+  starts 1 2022/01/10 23:58:50;
+  ends 2 2022/01/11 00:08:50;
+  cltt 1 2022/01/10 23:58:50;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}
+lease 192.168.4.108 {
+  starts 2 2022/01/11 00:03:17;
+  ends 2 2022/01/11 00:13:17;
+  cltt 2 2022/01/11 00:03:17;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 00:ea:d4:39:0d:04;
+  client-hostname "clsomimx6";
+}

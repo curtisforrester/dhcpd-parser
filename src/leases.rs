@@ -455,7 +455,7 @@ impl Lease {
         // Linux only: Is there a value for binding_state?
         if let Some(binding_state) = &self.binding_state {
             match binding_state.as_str() {
-                "active" => return true,
+                "active" => {},
                 "free" => return false,
                 other => println!("The value of binding_state is not recognized. Please file a bug! \"{}\"", other)
             }
