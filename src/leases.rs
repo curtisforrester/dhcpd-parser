@@ -74,7 +74,7 @@ impl LeaseKeyword {
             "cltt" => Ok(LeaseKeyword::Cltt),
             "authoring-byte-order" => Ok(LeaseKeyword::BiteOrder),
             // Doubtful we will need support
-            "option" | "set" | "on" | "bootp" | "reserved" | "failover" => Ok(LeaseKeyword::Ignored),
+            "option" | "set" | "on" | "bootp" | "reserved" | "failover" | "server-duid" => Ok(LeaseKeyword::Ignored),
             _ => Err(format!("'{}' is not a recognized lease option", s)),
         }
     }
