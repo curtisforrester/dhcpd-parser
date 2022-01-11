@@ -91,6 +91,17 @@ fn parse_config(tokens: Vec<LexItem>) -> Result<ParserResult, String> {
                     None => return Err(format!("Expected semicolon after author-bite-order term")),
                 }
             }
+            LexItem::Opt(LeaseKeyword::Ignored) => {
+                it.next();
+                // Consume up to the endl
+                loop {
+                    match it.next_if(|&k | k != &LexItem::Endl && k != &LexItem::Paren('}')) {
+                        Some(_) => (),  // println!("Skipping: {}", token),
+                        None => break
+                    };
+                }
+                it.next();
+            }
             _ => {
                 return Err(format!("Unexpected {:?}", it.peek()));
             }
